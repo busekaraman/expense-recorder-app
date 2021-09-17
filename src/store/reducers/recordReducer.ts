@@ -1,0 +1,41 @@
+import { RecordAction, RecordState } from "../../types/record";
+
+
+const defaultState: RecordState={
+    data:[],
+    loading:false,
+    error:"",
+}
+
+//recodreducer fonksiyonu her zaman state döndüreceği için burdaki fonksiyonun döndürdüğü type recordState olarak girilir
+const recordReducer = (state:RecordState = defaultState,action:RecordAction):RecordState=>{
+    switch(action.type){
+        case "GET_RECORDS_START":
+            return{...state, loading:true, error:""}
+        case "GET_RECORDS_SUCCESS":
+            return{...state, loading:false, data:action.payload}
+        case "GET_RECORDS_ERROR":
+            return{...state, loading:false, error:"Error fetching records"}
+        case "ADD_RECORD_START":
+            return{...state, loading:true, error:""}
+        case "ADD_RECORD_SUCCESS":
+            return{...state, loading:false, data:[action.payload,...state.data]}
+        case "ADD_RECORD_ERROR":
+            return{...state, loading:false, error:"Error adding record"}
+        case "UPDATE_RECORD_START":
+            return{...state, loading:true, error:""}
+        case "UPDATE_RECORD_SUCCESS":
+            return{...state, loading:false, data:state.data.map(record=>record.id===action.payload.id? action.payload:record)}
+        case "UPDATE_RECORD_ERROR":
+            return{...state, loading:false, error:"Error updating record"}
+        case "DELETE_RECORD_START":
+            return{...state, loading:true, error:""}
+        case "DELETE_RECORD_SUCCESS":
+            //state'in içerisindeki data dizisinde payload id ye eşit olan varsa state'den çıkarılır
+            return{...state, loading:false, data:state.data.filter(record=>record.id!==action.payload)}
+        case "DELETE_RECORD_ERROR":
+            return{...state, loading:false, error:"Error deleting record"}
+        default: return state;
+    }
+}
+export default recordReducer;
